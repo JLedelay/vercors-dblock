@@ -3,6 +3,7 @@
 chcp 65001
 
 set start=%time%
+echo Started at %time%
 
 :: Runs your command
 cmd /c %*
