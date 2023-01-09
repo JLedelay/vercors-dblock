@@ -1,5 +1,4 @@
-package java.util.concurrent;
-import java.util.concurrent.Lock;
+package java.util.concurrent.locks;
 
 public interface ReadWriteLock {
 	

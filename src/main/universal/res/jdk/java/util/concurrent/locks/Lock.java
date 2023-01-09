@@ -1,4 +1,4 @@
-package java.util.concurrent;
+package java.util.concurrent.locks;
 
 public interface Lock {
 	
