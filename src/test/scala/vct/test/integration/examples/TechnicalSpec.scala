@@ -376,7 +376,27 @@ class TechnicalSpec extends VercorsSpec {
     }
     """
 
-  vercors should verify using silicon in "example using string primitive" pvl
+  vercors should verify using silicon in "example using negative array size" java
+    """
+    class C {
+      void m() {
+      /*[/expect arraySize]*/
+          int[] arr = new int[-2];
+      /*[/end]*/
+      }
+    }
+    """
+
+  vercors should verify using silicon in "example using negative array size in pvl" pvl
+    """
+    void m() {
+      /*[/expect arraySize]*/
+        int[] arr = new int[-2];
+      /*[/end]*/
+    }
+    """
+
+vercors should verify using silicon in "example using string primitive" pvl
     """
     void g() {
         "xuz";
@@ -411,4 +431,17 @@ class TechnicalSpec extends VercorsSpec {
       assert (new C(1) + new C(2)).x == 3;
     }
     """
+
+  vercors should verify using anyBackend example "technical/labeledEmbeddedStatement.c"
+
+  vercors should verify using anyBackend in "usage of given/yields in C" c """
+    /*@
+    given int x;
+    yields int y;
+    requires x == 3;
+    ensures y == 8;
+    @*/
+    void test();
+  """
 }
+

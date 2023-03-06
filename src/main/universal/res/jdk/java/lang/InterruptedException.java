@@ -1,5 +1,5 @@
 package java.lang;
 
-public class InterruptedException extends RuntimeException {
+class InterruptedException extends Exception {
 
 }
