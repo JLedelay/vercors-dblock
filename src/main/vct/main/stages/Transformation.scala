@@ -239,6 +239,7 @@ case class SilverTransformation
     ResolveExpressionSideEffects,
     EncodeTryThrowSignals,
 
+    ResolveScale,
     // No more classes
     ClassToRef,
 
@@ -249,6 +250,7 @@ case class SilverTransformation
     DesugarCollectionOperators,
     EncodeNdIndex,
 
+    ExtractInlineQuantifierPatterns,
     // Translate internal types to domains
     FloatToRat,
     EnumToDomain,
@@ -274,7 +276,6 @@ case class SilverTransformation
 
     // Silver compat (basically no new nodes)
     FinalizeArguments,
-    ResolveScale,
     ExplicitADTTypeArgs,
     ForLoopToWhileLoop,
     BranchToIfElse,
