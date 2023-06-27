@@ -892,6 +892,8 @@ abstract class CoercingRewriter[Pre <: Generation]() extends AbstractRewriter[Pr
         //DerefVeyMontThread( TVeyMontThread[Pre](ref))
       case deref @ Deref(obj, ref) =>
         Deref(cls(obj), ref)(deref.blame)
+      case deref @ DerefHeapVariable(ref) =>
+        DerefHeapVariable(ref)(deref.blame)
       case deref @ DerefPointer(p) =>
         DerefPointer(pointer(p)._1)(deref.blame)
       case deref @ DerefVeyMontThread(ref) => deref
@@ -1185,6 +1187,8 @@ abstract class CoercingRewriter[Pre <: Generation]() extends AbstractRewriter[Pr
         PredicateApply(ref, coerceArgs(args, ref.decl), rat(perm))
       case inv @ ProcedureInvocation(ref, args, outArgs, typeArgs, givenMap, yields) =>
         ProcedureInvocation(ref, coerceArgs(args, ref.decl, typeArgs), outArgs, typeArgs, coerceGiven(givenMap), coerceYields(yields, inv))(inv.blame)
+      case inv @ LlvmFunctionInvocation(ref, args, givenMap, yields) =>
+        LlvmFunctionInvocation(ref, args, givenMap, yields)(inv.blame)
       case ProcessApply(process, args) =>
         ProcessApply(process, coerceArgs(args, process.decl))
       case ProcessChoice(left, right) =>
@@ -1566,6 +1570,7 @@ abstract class CoercingRewriter[Pre <: Generation]() extends AbstractRewriter[Pr
       case bar @ ParBarrier(block, invs, requires, ensures, content) => ParBarrier(block, invs, res(requires), res(ensures), content)(bar.blame)
       case p @ ParInvariant(decl, inv, content) => ParInvariant(decl, res(inv), content)(p.blame)
       case ParStatement(impl) => ParStatement(impl)
+      case RangedFor(iter, contract, body) => RangedFor(iter, contract, body)
       case Recv(ref) => Recv(ref)
       case r @ Refute(assn) => Refute(res(assn))(r.blame)
       case Return(result) => Return(result) // TODO coerce return, make AmbiguousReturn?
@@ -1596,6 +1601,8 @@ abstract class CoercingRewriter[Pre <: Generation]() extends AbstractRewriter[Pr
     decl match {
       case unit: CTranslationUnit[Pre] =>
         new CTranslationUnit(unit.declarations)
+      case variable: HeapVariable[Pre] =>
+        new HeapVariable(variable.t)
       case rule: SimplificationRule[Pre] =>
         new SimplificationRule[Pre](bool(rule.axiom))
       case dataType: AxiomaticDataType[Pre] =>
@@ -1816,6 +1823,8 @@ abstract class CoercingRewriter[Pre <: Generation]() extends AbstractRewriter[Pr
   def coerce(node: Location[Pre]): Location[Pre] = {
     implicit val o: Origin = node.o
     node match {
+      case HeapVariableLocation(ref) =>
+        HeapVariableLocation(ref)
       case FieldLocation(obj, field) =>
         FieldLocation(cls(obj), field)
       case ModelLocation(obj, field) =>
